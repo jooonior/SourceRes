@@ -94,45 +94,40 @@ CON_COMMAND(sr_list, "List all currently available resolutions.")
 	}
 }
 
-CON_COMMAND(sr_add, "Register a new window resolution.")
+/**
+ * Register a new video mode with specific resolution.
+ * Does nothing if a mode with the same resolution is already present.
+ *
+ * @return If a new video mode was added.
+ */
+static bool RegisterResolution(int width, int height)
 {
-	if (args.ArgC() != 3) {
-		Warning("Usage: sr_add <width> <height>\n");
-		return;
-	}
-
-	int width = strtol(args.Arg(1), NULL, 10);
-	int height = strtol(args.Arg(2), NULL, 10);
-
 	// Get modes.
-	vmode_s *modeList = NULL;
-	int count = 0;
+	vmode_s *modeList;
+	int count;
 	engine->GetVideoModes(count, modeList);
+
+	// Return if a mode with desired resolution is already present.
+	for (auto i = 0; i < count; i++)
+	{
+		vmode_s mode = modeList[i];
+		if (mode.width == width && mode.height == height)
+		{
+			return false;
+		}
+	}
 
 	// Mode count should be right before the mode array.
 	int *modeCount = (int *)modeList - 1;
 
 	if (*modeCount != count)
 	{
-		Warning("sr_add : Failed to access video mode count. Aborting.\n");
-		return;
+		throw "Failed to access video mode count. Aborting.";
 	}
 
 	if (count >= MAX_MODE_LIST)
 	{
-		Warning("sr_add : Video mode array is full. Can't add any more modes.\n");
-		return;
-	}
-
-	// Check if a mode with desired resolution is already present.
-	for (auto i = 0; i < count; i++)
-	{
-		vmode_s mode = modeList[i];
-		if (mode.width == width && mode.height == height)
-		{
-			Msg("Resolution %ix%i is already available.", width, height);
-			return;
-		}
+		throw "Video mode array is full. Can't add any more modes.";
 	}
 
 	// These seem to have the same value across all modes.
@@ -157,6 +152,31 @@ CON_COMMAND(sr_add, "Register a new window resolution.")
 
 	// Update the internal counter.
 	*modeCount += 1;
+
+	return true;
+}
+
+CON_COMMAND(sr_add, "Register a new window resolution.")
+{
+	if (args.ArgC() != 3) {
+		Warning("Usage: sr_add <width> <height>\n");
+		return;
+	}
+
+	int width = strtol(args.Arg(1), NULL, 10);
+	int height = strtol(args.Arg(2), NULL, 10);
+
+	try
+	{
+		if (!RegisterResolution(width, height))
+		{
+			Msg("Resolution %ix%i is already available.\n", width, height);
+		}
+	}
+	catch (const char *err)
+	{
+		Warning("sr_add : %s\n", err);
+	}
 }
 
 CON_COMMAND(sr_set, "Set the current windowed resolution.")
