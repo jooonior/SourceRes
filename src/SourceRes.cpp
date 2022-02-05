@@ -124,6 +124,17 @@ CON_COMMAND(sr_add, "Register a new window resolution.")
 		return;
 	}
 
+	// Check if a mode with desired resolution is already present.
+	for (auto i = 0; i < count; i++)
+	{
+		vmode_s mode = modeList[i];
+		if (mode.width == width && mode.height == height)
+		{
+			Msg("Resolution %ix%i is already available.", width, height);
+			return;
+		}
+	}
+
 	// These seem to have the same value across all modes.
 	int refreshRate = modeList[0].refreshRate;
 	int bitsPerPixel = modeList[0].bpp;
