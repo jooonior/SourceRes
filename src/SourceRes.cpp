@@ -24,6 +24,8 @@ bool SequencePlugin::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn 
 	}
 
 	ConVar_Register(0);
+
+	ConColorMsg(Color(0, 255, 0, 255), PLUGIN_DESC " loaded.\n");
 	return true;
 }
 
