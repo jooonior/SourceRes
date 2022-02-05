@@ -179,6 +179,15 @@ CON_COMMAND(sr_add, "Register a new window resolution.")
 	}
 }
 
+static void SetResolution(int width, int height)
+{
+	// Use mat_setvideomode to change the resolution.
+	// It will change to a registered resolution that is the closest to given dimensions.
+	char command[256];
+	sprintf(command, "mat_setvideomode %i %i 1", width, height);
+	engine->ClientCmd_Unrestricted(command);
+}
+
 CON_COMMAND(sr_set, "Set the current windowed resolution.")
 {
 	if (args.ArgC() != 3) {
@@ -186,7 +195,8 @@ CON_COMMAND(sr_set, "Set the current windowed resolution.")
 		return;
 	}
 
-	char command[256];
-	sprintf(command, "mat_setvideomode %s %s 1", args.Arg(1), args.Arg(2));
-	engine->ClientCmd_Unrestricted(command);
+	int width = strtol(args.Arg(1), NULL, 10);
+	int height = strtol(args.Arg(2), NULL, 10);
+
+	SetResolution(width, height);
 }
