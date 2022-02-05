@@ -188,7 +188,7 @@ static void SetResolution(int width, int height)
 	engine->ClientCmd_Unrestricted(command);
 }
 
-CON_COMMAND(sr_set, "Set the current windowed resolution.")
+CON_COMMAND(sr_set, "Change to the closest available resolution to given dimesions.")
 {
 	if (args.ArgC() != 3) {
 		Warning("Usage: sr_set <width> <height>\n");
