@@ -200,3 +200,30 @@ CON_COMMAND(sr_set, "Change to the closest available resolution to given dimesio
 
 	SetResolution(width, height);
 }
+
+CON_COMMAND(sr_force, "Set the current exact windowed resolution.")
+{
+	if (args.ArgC() != 3) {
+		Warning("Usage: sr_set <width> <height>\n");
+		return;
+	}
+
+	int width = strtol(args.Arg(1), NULL, 10);
+	int height = strtol(args.Arg(2), NULL, 10);
+
+	try
+	{
+		// Register the resolution if it's not already.
+		if (RegisterResolution(width, height))
+		{
+			Msg("Resolution %ix%i wasn't available and had to be registered.\n", width, height);
+		}
+	}
+	catch (const char *err)
+	{
+		Warning("sr_set : %s\n", err);
+		return;
+	}
+
+	SetResolution(width, height);
+}
