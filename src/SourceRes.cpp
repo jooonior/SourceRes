@@ -126,3 +126,15 @@ CON_COMMAND(sr_add, "Register a new window resolution.")
 	// Update the internal counter.
 	*modeCount += 1;
 }
+
+CON_COMMAND(sr_set, "Set the current windowed resolution.")
+{
+	if (args.ArgC() != 3) {
+		Warning("Usage: sr_set <width> <height>\n");
+		return;
+	}
+
+	char command[256];
+	sprintf(command, "mat_setvideomode %s %s 1", args.Arg(1), args.Arg(2));
+	engine->ClientCmd_Unrestricted(command);
+}
