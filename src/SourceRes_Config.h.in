@@ -1,0 +1,2 @@
+#define SourceRes_VERSION_MAJOR @SourceRes_VERSION_MAJOR@
+#define SourceRes_VERSION_MINOR @SourceRes_VERSION_MINOR@

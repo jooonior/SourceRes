@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(SourceRes VERSION 2.0)
 
+# Header with CMake provided information.
+configure_file(src/SourceRes_Config.h.in SourceRes_Config.h)
+# ^ generated in output directory, needs to be included.
+include_directories(${PROJECT_BINARY_DIR})
+
 # Add code.
 set(SOURCE
 	src/SourceRes.cpp
