@@ -1,1 +1,5 @@
 build/
+mod/addons/SourceRes.dll
+
+# Gets created by the game when you mount the mod directory.
+mod/sound/sound.cache

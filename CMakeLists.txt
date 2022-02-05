@@ -34,3 +34,12 @@ add_library(SourceRes SHARED
 # Link SDK libraries.
 target_link_libraries(SourceRes ${HL2SDK}/lib/public/tier0.lib)
 target_link_libraries(SourceRes ${HL2SDK}/lib/public/tier1.lib)
+
+# Copy built binary to mod directory.
+add_custom_command(
+	TARGET SourceRes
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy
+		$<TARGET_FILE:SourceRes>
+		"${PROJECT_SOURCE_DIR}/mod/addons"
+)
