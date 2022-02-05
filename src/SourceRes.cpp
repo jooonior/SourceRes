@@ -64,12 +64,31 @@ CON_COMMAND(sr_list, "List all currently available resolutions.")
 	int count;
 	engine->GetVideoModes(count, modeList);
 
+	// Get current resolution.
+	int width, height;
+	engine->GetScreenSize(width, height);
+
+	DevMsg("Current resolution: %ix%i\n", width, height);
 	DevMsg("Reading video mode array from offset: %#x\n", modeList);
 
+	// Print resolutions out in a grid.
 	for (auto i = 0; i < count; i++)
 	{
 		vmode_s mode = modeList[i];
-		Msg("%ix%i\n", mode.width, mode.height);
+
+		// Current resolution in different color.
+		Color color = (mode.width == width && mode.height == height) ? Color(0, 255, 0, 255) : Color(255, 255, 255, 255);
+		ConColorMsg(color, "%ix%i     \t", mode.width, mode.height);
+
+		if (i % 4 == 3)
+		{
+			Msg("\n");
+		}
+	}
+	// Always finish with a newline.
+	if (count % 4 != 0)
+	{
+		Msg("\n");
 	}
 }
 
