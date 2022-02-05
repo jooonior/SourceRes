@@ -95,6 +95,23 @@ CON_COMMAND(sr_list, "List all currently available resolutions.")
 }
 
 /**
+ * Find the address of the engine's internal video mode count.
+ */
+static int* GetInternalModeCount(const vmode_s *modeList, int count)
+{
+	// Mode count should be right before the mode array.
+	int *modeCount = (int *)modeList - 1;
+
+	// Verify that the value matches.
+	if (*modeCount != count)
+	{
+		throw "Failed to access video mode count. Aborting.";
+	}
+
+	return modeCount;
+}
+
+/**
  * Register a new video mode with specific resolution.
  * Does nothing if a mode with the same resolution is already present.
  *
@@ -117,18 +134,12 @@ static bool RegisterResolution(int width, int height)
 		}
 	}
 
-	// Mode count should be right before the mode array.
-	int *modeCount = (int *)modeList - 1;
-
-	if (*modeCount != count)
-	{
-		throw "Failed to access video mode count. Aborting.";
-	}
-
 	if (count >= MAX_MODE_LIST)
 	{
 		throw "Video mode array is full. Can't add any more modes.";
 	}
+
+	int *modeCount = GetInternalModeCount(modeList, count);
 
 	// These seem to have the same value across all modes.
 	int refreshRate = modeList[0].refreshRate;
@@ -226,4 +237,29 @@ CON_COMMAND(sr_force, "Set the current exact windowed resolution.")
 	}
 
 	SetResolution(width, height);
+}
+
+CON_COMMAND(sr_purge, "Remove all registered resolutions except for the currently active one.")
+{
+	// Get video modes.
+	vmode_s *modeList;
+	int count;
+	engine->GetVideoModes(count, modeList);
+
+	// Get mode counter.
+	int *modeCount;
+	try
+	{
+		modeCount = GetInternalModeCount(modeList, count);
+	}
+	catch (const char *err)
+	{
+		Warning("sr_purge : %s\n", err);
+	}
+
+	// Change the first mode's resolution to the current one.
+	engine->GetScreenSize(modeList[0].width, modeList[0].height);
+
+	// Discard all other video modes.
+	*modeCount = 1;
 }
