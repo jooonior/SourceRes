@@ -7,20 +7,19 @@ with improved stability and compatibility (any Source SDK 2013 based game).
 
 ## Limitations
 
-Custom resolutions only in windowed mode, as the native fullscreen renderer won't work with
-anything it doesn't explicitly support.
+Custom resolutions work only in windowed mode. In fullscreen, you get no video output.
+I'm not aware of any way to fix this.
 
 ## Commands
 
-### `sr_list`
-List all available resolutions. Initially these will be the ones you can change to normally.
-### `sr_add <width> <height>`
-Add a new custom resolution to the list of available resolutions. Skips duplicates.
-### `sr_set <width> <height>`
-Change the current resolution. Shortcut for `mat_setvideomode <width> <height> 1`,
-therefore limited to available resolutions.
 ### `sr_force <width> <height>`
-Set the current exact resolution. Equivalent to `sr_add` followed by `sr_set`.
+Register and change to given resolution. Equivalent to `sr_add` followed by `sr_set`.
+### `sr_list`
+List all registered resolutions.
+### `sr_add <width> <height>`
+Register a new custom resolution.
+### `sr_set <width> <height>`
+Change to a registered resolution. Shortcut for `mat_setvideomode <width> <height> 1`.
 ### `sr_purge`
 Remove all registered resolutions except for one currently in use.
 In case you manage to hit the resolution list length limit.
